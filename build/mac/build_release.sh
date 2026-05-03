@@ -3,6 +3,18 @@
 # Echo all commands and exit on failure
 set -euxo pipefail
 
+# Creating function to remove deprecated AGL framework from generated Makefiles. 
+# This function must be called every time a ‘Makefile’ is generated.
+# (macOS modern fix)
+fix_agl() {
+    if [ -f Makefile ]; then
+        echo "Patching Makefile: removing -framework AGL"
+        sed -i '' 's/-framework AGL//g' Makefile
+    else
+    	echo "No Makefile found"
+    fi
+}
+
 # Error checking for required variable APROJECTS
 if [ -z "$APROJECTS" ] ; then echo APROJECTS environment variable not set ; exit 1 ; fi
 if [ ! -d "$APROJECTS" ]; then echo "$APROJECTS" does not exist ; exit 1 ; fi
@@ -46,6 +58,7 @@ rm -rf ${APROJECTS}/build-atools-${CONF_TYPE}
 mkdir -p ${APROJECTS}/build-atools-${CONF_TYPE}
 cd ${APROJECTS}/build-atools-${CONF_TYPE}
 ${QMAKE_SHARED} ${APROJECTS}/atools/atools.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE} 'QMAKE_APPLE_DEVICE_ARCHS=x86_64 arm64'
+fix_agl
 make
 
 # ===========================================================================
@@ -54,6 +67,7 @@ rm -rf ${APROJECTS}/build-littlenavconnect-${CONF_TYPE}
 mkdir -p ${APROJECTS}/build-littlenavconnect-${CONF_TYPE}
 cd ${APROJECTS}/build-littlenavconnect-${CONF_TYPE}
 ${QMAKE_SHARED} ${APROJECTS}/littlenavconnect/littlenavconnect.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE} 'QMAKE_APPLE_DEVICE_ARCHS=x86_64 arm64'
+fix_agl
 make
 make copydata
 make deploy -i -l
@@ -64,6 +78,7 @@ rm -rf ${APROJECTS}/build-littlenavmap-${CONF_TYPE}
 mkdir -p ${APROJECTS}/build-littlenavmap-${CONF_TYPE}
 cd ${APROJECTS}/build-littlenavmap-${CONF_TYPE}
 ${QMAKE_SHARED} ${APROJECTS}/littlenavmap/littlenavmap.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE} 'QMAKE_APPLE_DEVICE_ARCHS=x86_64 arm64'
+fix_agl
 make
 make copydata
 make deploy -i -l
@@ -88,6 +103,7 @@ rm -rf ${APROJECTS}/build-atools-${CONF_TYPE}
 mkdir -p ${APROJECTS}/build-atools-${CONF_TYPE}
 cd ${APROJECTS}/build-atools-${CONF_TYPE}
 ${QMAKE_SHARED} ${APROJECTS}/atools/atools.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE} 'QMAKE_APPLE_DEVICE_ARCHS=x86_64 arm64'
+fix_agl
 make
 
 # ===========================================================================
@@ -96,6 +112,7 @@ rm -rf ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
 mkdir -p ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
 cd ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
 ${QMAKE_SHARED} ${APROJECTS}/littlexpconnect/littlexpconnect.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE} 'QMAKE_APPLE_DEVICE_ARCHS=x86_64 arm64'
+fix_agl
 make
 make deploy -i -l
 
