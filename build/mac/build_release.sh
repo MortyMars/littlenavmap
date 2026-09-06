@@ -8,10 +8,15 @@ set -euxo pipefail
 # (macOS modern fix)
 fix_agl() {
     if [ -f Makefile ]; then
-        echo "Patching Makefile: removing -framework AGL"
-        sed -i '' 's/-framework AGL//g' Makefile
-    else
-    	echo "No Makefile found"
+
+        SDK_PATH=$(xcrun --sdk macosx --show-sdk-path 2>/dev/null)
+
+        if [ ! -d "${SDK_PATH}/System/Library/Frameworks/AGL.framework" ]; then
+            echo "AGL framework not found in SDK -> removing from Makefile"
+            sed -i '' 's/-framework AGL//g' Makefile
+        else
+            echo "AGL framework present in SDK -> keeping it"
+        fi
     fi
 }
 

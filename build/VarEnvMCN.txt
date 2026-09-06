@@ -1,0 +1,4 @@
+export APROJECTS=/Users/martial/Programmation/Projets_Qt/_Contrib_LNM
+export QMAKE_SHARED=/Applications/Qt/6.5.3/macos/bin/qmake 
+
+export QSG_RHI_BACKEND=metal
